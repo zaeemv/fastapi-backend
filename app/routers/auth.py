@@ -91,3 +91,14 @@ def register(
     session.commit()
     session.refresh(db_user)
     return db_user
+
+@router.post("/me", response_model=schemas.TokenResponse)
+def get_current_user_info(current_user: User = Depends(get_current_user)):
+    """Get current user info."""
+    return schemas.TokenResponse(
+        access_token=current_user.access_token,
+        token_type="bearer",
+        user_id=current_user.id,
+        username=current_user.username,
+        email=current_user.email,
+    )
