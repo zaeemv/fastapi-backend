@@ -36,3 +36,11 @@ class UserUpdate(SQLModel):
     email: Optional[str] = None
     full_name: Optional[str] = None
     is_active: Optional[bool] = None
+
+class UserResponse(SQLModel):
+    user_id: int
+    username: str
+    email: str
+
+class TokenRequest(SQLModel):
+    token: str

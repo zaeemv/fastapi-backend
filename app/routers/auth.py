@@ -92,13 +92,20 @@ def register(
     session.refresh(db_user)
     return db_user
 
-@router.post("/me", response_model=schemas.TokenResponse)
-def get_current_user_info(current_user: User = Depends(get_current_user)):
-    """Get current user info."""
-    return schemas.TokenResponse(
-        access_token=current_user.access_token,
-        token_type="bearer",
-        user_id=current_user.id,
-        username=current_user.username,
-        email=current_user.email,
+@router.get("/me", response_model=schemas.UserUpdate)
+def get_current_user_info(
+    user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    session.refresh(user)
+    return user
+
+@router.post("/validate", response_model=schemas.UserResponse)
+def get_user_info_from_token(request: schemas.TokenRequest, session: Session = Depends(get_session)):
+    """Get current user info from token in request body."""
+    user = get_user_from_token(request.token, session)
+    return schemas.UserResponse(
+        user_id=user.id,
+        username=user.username,
+        email=user.email
     )
